@@ -1,12 +1,12 @@
 package com.devmarrima.DMcatalog.services;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,10 +25,9 @@ public class CategoryService {
     private CategoryRepository categoryRepository;
 
     @Transactional(readOnly = true)
-    public List<CategoryDTO> findAll() {
-        List<Category> list = categoryRepository.findAll();
-        return list.stream().map(x -> new CategoryDTO(x)).collect(Collectors.toList());
-
+    public Page<CategoryDTO> findAllPeged(PageRequest pageRequest) {
+        Page<Category> page = categoryRepository.findAll(pageRequest);
+        return page.map(x -> new CategoryDTO(x));
     }
 
     @Transactional(readOnly = true)
@@ -36,7 +35,6 @@ public class CategoryService {
         Optional<Category> entity = categoryRepository.findById(id);
         Category cat = entity.orElseThrow(() -> new ResourceNotFoundException("Entity not found"));
         return new CategoryDTO(cat);
-
     }
 
     @Transactional
@@ -45,7 +43,6 @@ public class CategoryService {
         entity.setName(dto.getName());
         entity = categoryRepository.save(entity);
         return new CategoryDTO(entity);
-
     }
 
     @Transactional
@@ -56,7 +53,7 @@ public class CategoryService {
             entity = categoryRepository.save(entity);
             return new CategoryDTO(entity);
         } catch (EntityNotFoundException e) {
-            throw new ResourceNotFoundException("id "+ id + " not found!");
+            throw new ResourceNotFoundException("id " + id + " not found!");
         }
 
     }
@@ -65,7 +62,7 @@ public class CategoryService {
         try {
             categoryRepository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
-            throw new ResourceNotFoundException("id "+ id + " not found!" );
+            throw new ResourceNotFoundException("id " + id + " not found!");
         } catch (DataIntegrityViolationException e) {
             throw new DadabaseException("Integrity violation of id:" + id);
         }
