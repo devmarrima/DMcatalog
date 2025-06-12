@@ -31,11 +31,11 @@ public class ResourceExceptionHandler {
     @ExceptionHandler(DadabaseException.class)
     public ResponseEntity<StandardError> database(DadabaseException e, HttpServletRequest request) {
         
-        HttpStatus status = HttpStatus.NOT_FOUND;
+        HttpStatus status = HttpStatus.CONFLICT;
         StandardError err = new StandardError(null, null, null, null, null);
         err.setTimestamp(Instant.now());
         err.setStatus(status.value());
-        err.setError("Resource not found");
+        err.setError("Database integrity violation");
         err.setMessage(e.getMessage());
         err.setPath(request.getRequestURI());
         return ResponseEntity.status(status).body(err);
