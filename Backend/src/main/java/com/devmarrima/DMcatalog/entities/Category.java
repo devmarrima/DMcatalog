@@ -10,6 +10,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -31,6 +32,7 @@ public class Category implements Serializable {
 	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
 	private Instant updatedAt;
 
+	@ManyToMany(mappedBy = "categories")
 	Set<Product> products = new HashSet<>();
 
 	public Category() {
@@ -64,6 +66,10 @@ public class Category implements Serializable {
 
 	public Instant getUpdatedAt() {
 		return updatedAt;
+	}
+
+	public Set<Product> getProducts() {
+		return products;
 	}
 
 	@PrePersist

@@ -30,7 +30,8 @@ public class ProductResourceIT {
 
 	@Autowired
 	private ObjectMapper objectMapper;
-	
+
+	@SuppressWarnings("unused")
 	@Autowired
 	private ProductService service;
 
@@ -44,7 +45,7 @@ public class ProductResourceIT {
 		noExistId = 1000L;
 		countTotalProducts = 25L;
 	}
-	
+
 	@Test
 	public void findAllPagedShouldReturnSortedPageWhenSortByName() throws Exception {
 		ResultActions result = mockMvc.perform(get("/products?page=0&size=12&sort=name,asc")
@@ -55,40 +56,37 @@ public class ProductResourceIT {
 		result.andExpect(jsonPath("$.content[0].name").value("Macbook Pro"));
 		result.andExpect(jsonPath("$.content[1].name").value("PC Gamer"));
 		result.andExpect(jsonPath("$.content[2].name").value("PC Gamer Alfa"));
-				
+
 	}
-	
+
 	@Test
-	public void updateShouldReturnProductDTOWhenExistsId()throws Exception{
+	public void updateShouldReturnProductDTOWhenExistsId() throws Exception {
 		ProductDTO productDTO = Factory.createProductDTO();
 		String jsonBody = objectMapper.writeValueAsString(productDTO);
-		
+
 		String expectedName = productDTO.getName();
 		String expectedDescription = productDTO.getDescription();
-		
-		ResultActions result = mockMvc.perform(put("/products/{id}",existId)
+
+		ResultActions result = mockMvc.perform(put("/products/{id}", existId)
 				.content(jsonBody)
 				.contentType(MediaType.APPLICATION_JSON.toString())
-				.accept(MediaType.APPLICATION_JSON.toString())
-				);
+				.accept(MediaType.APPLICATION_JSON.toString()));
 		result.andExpect(status().isOk());
 		result.andExpect(jsonPath("$.id").value(existId));
 		result.andExpect(jsonPath("$.name").value(expectedName));
 		result.andExpect(jsonPath("$.description").value(expectedDescription));
 	}
-	
+
 	@Test
-	public void updateShouldReturnNotFoundWhenDoesNoExistsId()throws Exception{
+	public void updateShouldReturnNotFoundWhenDoesNoExistsId() throws Exception {
 		ProductDTO productDTO = Factory.createProductDTO();
 		String jsonBody = objectMapper.writeValueAsString(productDTO);
 		ResultActions result = mockMvc.perform(put("/products/{id}", noExistId)
 				.content(jsonBody)
 				.contentType(MediaType.APPLICATION_JSON.toString())
-				.accept(MediaType.APPLICATION_JSON.toString())
-				);
+				.accept(MediaType.APPLICATION_JSON.toString()));
 		result.andExpect(status().isNotFound());
-		
+
 	}
-	
 
 }
