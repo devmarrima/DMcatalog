@@ -8,12 +8,22 @@ import java.util.Set;
 import com.devmarrima.DMcatalog.entities.Category;
 import com.devmarrima.DMcatalog.entities.Product;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
+
 public class ProductDTO {
     private Long id;
+    @Size(min = 02, max = 100, message = "O campo deve ter 02 a 100 caracteres")
+    @NotBlank(message = "Campo requerido")
     private String name;
+    @NotBlank(message = "Campo requerido")
     private String description;
+    @Positive(message = "O preço deve ser positivo")
     private Double price;
     private String imgUrl;
+    @PastOrPresent(message = "Não pode ser uma data futura")
     private Instant date;
 
     private List<CategoryDTO> categories = new ArrayList<>();

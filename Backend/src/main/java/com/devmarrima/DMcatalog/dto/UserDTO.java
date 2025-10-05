@@ -5,11 +5,20 @@ import java.util.Set;
 
 import com.devmarrima.DMcatalog.entities.User;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 public class UserDTO {
 
 	private Long id;
+    @Size(min = 02, max = 100, message = "O campo deve ter 02 a 100 caracteres")
+    @NotBlank(message = "Campo requerido")
 	private String firstName;
+    @Size(min = 02, max = 100, message = "O campo deve ter 02 a 100 caracteres")
+    @NotBlank(message = "Campo requerido")
 	private String lastName;
+    @Email(message = "Entre com email válido")
 	private String email;
 	
 	private Set<RoleDTO> roles = new HashSet<>();
