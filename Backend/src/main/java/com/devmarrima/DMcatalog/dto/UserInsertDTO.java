@@ -1,5 +1,8 @@
 package com.devmarrima.DMcatalog.dto;
 
+import com.devmarrima.DMcatalog.services.validation.UserInsertValid;
+
+@UserInsertValid
 public class UserInsertDTO extends UserDTO {
 
     private String password;
