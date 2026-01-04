@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.devmarrima.DMcatalog.dto.ProductDTO;
 import com.devmarrima.DMcatalog.services.ProductService;
 import com.devmarrima.DMcatalog.tests.Factory;
+import com.devmarrima.DMcatalog.tests.TokenUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
@@ -27,6 +28,9 @@ public class ProductResourceIT {
 
 	@Autowired
 	private MockMvc mockMvc;
+	
+	@Autowired
+	private TokenUtil tokenUtil;
 
 	@Autowired
 	private ObjectMapper objectMapper;
@@ -38,12 +42,18 @@ public class ProductResourceIT {
 	private Long existId;
 	private Long noExistId;
 	private Long countTotalProducts;
+	private String username, password, bearerToken;
 
 	@BeforeEach
 	void setUp() throws Exception {
 		existId = 1L;
 		noExistId = 1000L;
 		countTotalProducts = 25L;
+		
+		username = "maria@gmail.com";
+		password = "123456";
+		
+		bearerToken = tokenUtil.obtainAccessToken(mockMvc, username, password);
 	}
 
 	@Test
@@ -68,6 +78,7 @@ public class ProductResourceIT {
 		String expectedDescription = productDTO.getDescription();
 
 		ResultActions result = mockMvc.perform(put("/products/{id}", existId)
+				.header("Authorization", "Bearer " + bearerToken)
 				.content(jsonBody)
 				.contentType(MediaType.APPLICATION_JSON.toString())
 				.accept(MediaType.APPLICATION_JSON.toString()));
@@ -82,6 +93,7 @@ public class ProductResourceIT {
 		ProductDTO productDTO = Factory.createProductDTO();
 		String jsonBody = objectMapper.writeValueAsString(productDTO);
 		ResultActions result = mockMvc.perform(put("/products/{id}", noExistId)
+				.header("Authorization", "Bearer " + bearerToken)
 				.content(jsonBody)
 				.contentType(MediaType.APPLICATION_JSON.toString())
 				.accept(MediaType.APPLICATION_JSON.toString()));
